@@ -27,10 +27,13 @@
             <ion-label><img src="assets/icon/login/password.png" /></ion-label>
           </ion-item>
         </div>
+
+        <div class="label" [hidden]=hidden>
+          <p>Invalid Account</p>
+        </div>
+
         <div class="buttons">
-          <ion-button (click)="login()" [routerLink]="['/landing']"
-            >LOGIN</ion-button
-          >
+          <ion-button (click)="login()">LOGIN</ion-button>
           <div class="signup">
             <p>Don't have an account?</p>
             <ion-button [routerLink]="['/register']">SIGN UP</ion-button>

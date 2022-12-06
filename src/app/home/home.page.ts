@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RequestlibService } from '../Services/requestlib.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,10 +8,11 @@ import { RequestlibService } from '../Services/requestlib.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  public username: any;
-  public password: any;
+  public username: string;
+  public password: string;
+  public hidden: boolean = true;
 
-  constructor(public requestLib: RequestlibService) {
+  constructor(private requestLib: RequestlibService, private router: Router) {
     // will be changed depends on where the IP
     // of the API server will be deployed.
     this.requestLib.setURI('http://localhost:5050');
@@ -22,9 +24,16 @@ export class HomePage {
       if (response['status'] == 200) {
         this.requestLib.setCookieValue('token', response['data']['token']);
         this.requestLib.initializeID(response['data']['id']);
+
+        // redirect to another page
+        this.router.navigate(['/landing']);
       }
     };
 
-    this.requestLib.generateToken(credentails, accepted);
+    const rejected = (response) => {
+      this.hidden = false
+    }
+
+    this.requestLib.generateToken(credentails, accepted, rejected);
   }
 }
