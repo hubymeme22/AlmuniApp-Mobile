@@ -1,6 +1,12 @@
-<ion-content>
-  <app-header></app-header>
+<div class="header">
+  <img src="assets/icon/BSU-LOGO.png" />
+  <div>
+    BatStateU <br />
+    <span>Alumni</span>
+  </div>
+</div>
 
+<ion-content>
   <div class="main-con">
     <div class="content">
       <div class="news" [routerLink]="['/news']">
@@ -11,20 +17,19 @@
       </div>
     </div>
   </div>
-
-  <div class="navbar">
-    <div class="home" [routerLink]="['/landing']">
-      <img src="assets/icon/navbar/home.png" />Home
-    </div>
-
-    <div class="jobs" [routerLink]="['/jobs']">
-      <img src="assets/icon/navbar/jobs.png" />Jobs
-    </div>
-    <div class="alumni" [routerLink]="['/alumni-tab']">
-      <img src="assets/icon/navbar/alumni.png" />Alumni
-    </div>
-    <div class="profile" [routerLink]="['/profile']">
-      <img src="assets/icon/navbar/profile.png" />Profile
-    </div>
-  </div>
 </ion-content>
+<div class="navbar">
+  <div class="home" [routerLink]="['/landing']">
+    <img src="assets/icon/navbar/home.png" />Home
+  </div>
+
+  <div class="jobs" [routerLink]="['/jobs']" (click)="showLoading()">
+    <img src="assets/icon/navbar/jobs.png" />Jobs
+  </div>
+  <div class="alumni" [routerLink]="['/alumni-tab']" (click)="showLoading()">
+    <img src="assets/icon/navbar/alumni.png" />Alumni
+  </div>
+  <div class="profile" [routerLink]="['/profile']">
+    <img src="assets/icon/navbar/profile.png" />Profile
+  </div>
+</div>
