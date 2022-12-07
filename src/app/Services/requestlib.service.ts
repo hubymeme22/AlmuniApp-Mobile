@@ -14,7 +14,15 @@ export class RequestlibService {
   public accepted_callback = (response) => null;
   public rejected_callback = (error) => null;
 
-  constructor() { }
+  constructor() {
+    // retrieve saved data from localstorage
+    const loadedOldId = window.localStorage.getItem('old_id');
+    const loadednewId = window.localStorage.getItem('new_id');
+    if (loadedOldId != null && loadednewId != null) {
+      this.old_id = parseInt(loadedOldId);
+      this.new_id = parseInt(loadednewId);
+    }
+  }
 
   //////////////////////
   //  Helper methods  //
@@ -28,14 +36,17 @@ export class RequestlibService {
     console.log('[+] Uri set as: ', target_uri);
   }
 
-  // sets the cookie for all path
-  setCookieValue(name: string, value: string) {
-    document.cookie += `${name}=${value}; path=/`;
+  // sets the cookie for all path (also resets it)
+  setToken(value: string) {
+    document.cookie = `token=${value}; path=/;`;
   }
 
   // initializes the new and old id
   initializeID(old_id: number) {
     this.old_id = old_id;
+    this.new_id = old_id;
+    window.localStorage.setItem('old_id', old_id.toString());
+    window.localStorage.setItem('new_id', old_id.toString());
   }
 
   // checks for needed parameters if set
@@ -68,7 +79,9 @@ export class RequestlibService {
     });
 
     // proceed to request
-    const axios_promise = axios.post(this.uri + path, format);
+    const axios_promise = axios.post(this.uri + path, format, {
+      withCredentials: true
+    });
     axios_promise.then(accept);
     axios_promise.catch(reject);
   }
@@ -76,7 +89,9 @@ export class RequestlibService {
   // GET request design
   request_GET(path: string, accept=this.accepted_callback, reject=this.rejected_callback) {
     // proceed to request
-    const axios_promise = axios.get(this.uri + path);
+    const axios_promise = axios.get(this.uri + path, {
+      withCredentials: true
+    });
     axios_promise.then(accept);
     axios_promise.catch(reject);
   }
@@ -86,7 +101,13 @@ export class RequestlibService {
   //////////////////////////////
   // generates token by logging in
   generateToken(credentails: Object, accept=this.accepted_callback, reject=this.rejected_callback) {
-    this.request_POST(credentails, '/api/login.php', accept, reject);
+    const format = new URLSearchParams();
+    format.append('username', credentails['username']);
+    format.append('password', credentails['password']);
+
+    const axios_promise = axios.post(this.uri + '/api/login.php', format);
+    axios_promise.then(accept);
+    axios_promise.catch(reject);
   }
 
   // gets the alumni (with filter)
