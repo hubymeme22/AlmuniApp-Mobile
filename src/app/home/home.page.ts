@@ -15,14 +15,14 @@ export class HomePage {
   constructor(private requestLib: RequestlibService, private router: Router) {
     // will be changed depends on where the IP
     // of the API server will be deployed.
-    this.requestLib.setURI('http://localhost:5050');
+    this.requestLib.setURI('http://192.168.1.10');
   }
 
   login() {
     const credentails = {'username': this.username, 'password': this.requestLib.md5(this.password)};
     const accepted = (response) => {
       if (response['status'] == 200) {
-        this.requestLib.setCookieValue('token', response['data']['token']);
+        this.requestLib.setToken(response['data']['token']);
         this.requestLib.initializeID(response['data']['id']);
 
         // redirect to another page

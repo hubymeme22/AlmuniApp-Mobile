@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RequestlibService } from '../Services/requestlib.service';
 import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-alumni-tab',
   templateUrl: './alumni-tab.page.html',
@@ -105,35 +107,38 @@ export class AlumniTabPage {
 
   constructor(
     private requestlib: RequestlibService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.lists = this.paginateArray();
+    this.requestlib.setURI('http://192.168.1.10');
+    this.paginateArray();
   }
 
   paginateArray() {
-    this.page++;
-    return this.array.filter(
-      (x) =>
-        x.id > this.page * this.perPage - this.perPage &&
-        x.id <= this.page * this.perPage
-    );
+    const accepted = (response) => {
+      console.log(response);
+      if (response.status == 200) {
+        if (response.data.status == 'invalid_token') {
+          console.log('whutt???');
+          this.router.navigate(['/']);
+        } else {
+          this.lists = response.data.data;
+        }
+      }
+    };
+
+    // get all the alumni
+    this.requestlib.getAlumni('', accepted);
   }
 
   loadMore(event) {
     console.log(event);
-    setTimeout(() => {
-      const array = this.paginateArray();
-      console.log('new data: ', array);
-      this.lists = this.lists.concat(array);
-      console.log('list data: ', this.lists);
-      event.target.complete();
-      if (array?.length < this.perPage) {
-        event.target.disabled = true;
-      }
-    }, 1000);
+    this.paginateArray();
+    event.target.complete();
   }
+
   async showLoading() {
     const loading = await this.loadingCtrl.create({
       message: 'Retrieving Data...',
